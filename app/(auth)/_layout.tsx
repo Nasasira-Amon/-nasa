@@ -7,6 +7,9 @@ export default function AuthLayout() {
         headerShown: false,
         contentStyle: { backgroundColor: '#000000' },
       }}
-    />
+    >
+      <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Screen name="signup" options={{ headerShown: false }} />
+    </Stack>
   );
 }
