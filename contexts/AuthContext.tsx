@@ -17,23 +17,27 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  // Store the current user, session, profile, and loading state
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // On app startup, check if user has an existing session
     (async () => {
       const { data: { session } } = await supabase.auth.getSession();
       setSession(session);
       setUser(session?.user ?? null);
 
+      // If logged in, fetch their profile from the database
       if (session?.user) {
         await fetchProfile(session.user.id);
       }
-      setLoading(false);
+      setLoading(false); // Done checking, stop showing loading screen
     })();
 
+    // Listen for authentication changes (login, logout, etc.)
     supabase.auth.onAuthStateChange((event, session) => {
       (async () => {
         setSession(session);
@@ -42,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           await fetchProfile(session.user.id);
         } else {
-          setProfile(null);
+          setProfile(null); // Clear profile when user logs out
         }
       })();
     });

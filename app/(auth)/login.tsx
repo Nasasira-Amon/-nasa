@@ -16,26 +16,33 @@ import { theme } from '../../lib/theme';
 import { Leaf } from 'lucide-react-native';
 
 export default function LoginScreen() {
+  // Store email and password input values
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Get signIn function from AuthContext
   const { signIn } = useAuth();
   const router = useRouter();
 
   const handleLogin = async () => {
+    // Validate that both fields are filled
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    setLoading(true);
+    setLoading(true); // Show loading state on button
     try {
+      // Attempt to sign in with Supabase authentication
       await signIn(email, password);
+      // On success, navigate to main app tabs
       router.replace('/(tabs)');
     } catch (error: any) {
+      // Show error message if login fails
       Alert.alert('Login Failed', error.message);
     } finally {
-      setLoading(false);
+      setLoading(false); // Stop loading state
     }
   };
 
