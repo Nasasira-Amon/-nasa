@@ -15,7 +15,9 @@ import { useAuth } from '../../contexts/AuthContext';
 import { theme } from '../../lib/theme';
 import { Leaf } from 'lucide-react-native';
 
+// Sign up screen for new users to create an account
 export default function SignupScreen() {
+  // Form input states
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -24,16 +26,19 @@ export default function SignupScreen() {
   const router = useRouter();
 
   const handleSignup = async () => {
+    // Validate all fields are filled
     if (!email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
+    // Check passwords match
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
+    // Enforce minimum password length for security
     if (password.length < 6) {
       Alert.alert('Error', 'Password must be at least 6 characters');
       return;
@@ -41,6 +46,7 @@ export default function SignupScreen() {
 
     setLoading(true);
     try {
+      // Create new user account in Supabase and their profile in database
       await signUp(email, password);
       Alert.alert('Success', 'Account created successfully!', [
         { text: 'OK', onPress: () => router.replace('/(tabs)') },

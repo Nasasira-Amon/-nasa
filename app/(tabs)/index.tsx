@@ -16,7 +16,9 @@ import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../contexts/AuthContext';
 import { MapPin, Globe } from 'lucide-react-native';
 
+// Main home screen showing 9 marketplace categories
 export default function HomeScreen() {
+  // State for the 9 categories loaded from database
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [language, setLanguage] = useState('English');
@@ -24,6 +26,7 @@ export default function HomeScreen() {
   const router = useRouter();
   const { profile, updateProfile } = useAuth();
 
+  // On mount, load categories from Supabase and user preferences
   useEffect(() => {
     loadCategories();
     if (profile) {
@@ -32,6 +35,7 @@ export default function HomeScreen() {
     }
   }, [profile]);
 
+  // Fetch all 9 categories from the database
   const loadCategories = async () => {
     try {
       const { data, error } = await supabase
@@ -40,26 +44,30 @@ export default function HomeScreen() {
         .order('name');
 
       if (error) throw error;
-      setCategories(data || []);
+      setCategories(data || []); // Set the categories array
     } catch (error) {
       console.error('Error loading categories:', error);
     } finally {
-      setLoading(false);
+      setLoading(false); // Hide loading spinner
     }
   };
 
+  // When user taps a category, increment visit count and navigate to detail page
   const handleCategoryPress = async (category: Category) => {
+    // Track analytics: increment visit count in database
     await supabase
       .from('categories')
       .update({ visit_count: category.visit_count + 1 })
       .eq('id', category.id);
 
+    // Navigate to category detail page with tabs (Buyer, Seller, Giveaway, Donator)
     router.push({
       pathname: '/category/[id]',
       params: { id: category.id, name: category.name },
     });
   };
 
+  // Save language preference to user's profile in database
   const handleLanguageChange = async (value: string) => {
     setLanguage(value);
     if (profile) {
