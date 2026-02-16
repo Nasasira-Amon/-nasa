@@ -24,22 +24,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // On app startup, check if user has an existing session
-    (async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-      setUser(session?.user ?? null);
+    let isMounted = true;
 
-      // If logged in, fetch their profile from the database
-      if (session?.user) {
-        await fetchProfile(session.user.id);
+    // On app startup, check if user has an existing session
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (isMounted) {
+          setSession(session);
+          setUser(session?.user ?? null);
+
+          // If logged in, fetch their profile from the database
+          if (session?.user) {
+            await fetchProfile(session.user.id);
+          }
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
+      } finally {
+        if (isMounted) {
+          setLoading(false); // Done checking, stop showing loading screen
+        }
       }
-      setLoading(false); // Done checking, stop showing loading screen
-    })();
+    };
+
+    initializeAuth();
 
     // Listen for authentication changes (login, logout, etc.)
-    supabase.auth.onAuthStateChange((event, session) => {
-      (async () => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (isMounted) {
         setSession(session);
         setUser(session?.user ?? null);
 
@@ -48,8 +62,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setProfile(null); // Clear profile when user logs out
         }
-      })();
+      }
     });
+
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchProfile = async (userId: string) => {

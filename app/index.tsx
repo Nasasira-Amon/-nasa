@@ -1,28 +1,53 @@
-import { useEffect } from 'react';
-import { Redirect } from 'expo-router';
-import { useAuth } from '../contexts/AuthContext';
-import { View, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useRouter } from 'expo-router';
 import { theme } from '../lib/theme';
 
-// This is the app's entry point - it decides where to route the user
 export default function Index() {
-  // Get authentication state from AuthContext
-  const { session, loading } = useAuth();
+  const router = useRouter();
 
-  // While checking auth status, show a loading spinner
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: theme.colors.background }}>
-        <ActivityIndicator size="large" color={theme.colors.secondary} />
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>DealSwapify</Text>
+      <Text style={styles.subtitle}>App is running!</Text>
 
-  // If user is logged in, redirect to the main app tabs
-  if (session) {
-    return <Redirect href="/(tabs)" />;
-  }
-
-  // If user is not logged in, redirect to the login screen
-  return <Redirect href="/(auth)/login" />;
+      <TouchableOpacity
+        style={styles.button}
+        onPress={() => router.push('/(auth)/login')}
+      >
+        <Text style={styles.buttonText}>Go to Login</Text>
+      </TouchableOpacity>
+    </View>
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.background,
+    padding: 20,
+  },
+  title: {
+    color: theme.colors.text,
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  subtitle: {
+    color: theme.colors.secondary,
+    fontSize: 18,
+    marginBottom: 32,
+  },
+  button: {
+    backgroundColor: theme.colors.secondary,
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 8,
+  },
+  buttonText: {
+    color: theme.colors.text,
+    fontSize: 16,
+    fontWeight: '600',
+  },
+});
