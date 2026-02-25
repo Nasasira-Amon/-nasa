@@ -1,20 +1,26 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { theme } from '../lib/theme';
 
 export default function Index() {
   const router = useRouter();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>DealSwapify</Text>
-      <Text style={styles.subtitle}>App is running!</Text>
+      <Text style={styles.title}>DealSwapify Running</Text>
+      <Text style={styles.subtitle}>App is Working!</Text>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => router.push('/(auth)/login')}
       >
         <Text style={styles.buttonText}>Go to Login</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        style={[styles.button, { marginTop: 16, backgroundColor: '#EF4444' }]}
+        onPress={() => router.push('/test')}
+      >
+        <Text style={styles.buttonText}>Test Screen</Text>
       </TouchableOpacity>
     </View>
   );
@@ -25,29 +31,35 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: '#000000',
     padding: 20,
+    width: '100%',
+    height: '100%',
   },
   title: {
-    color: theme.colors.text,
-    fontSize: 32,
+    color: '#10B981',
+    fontSize: 48,
     fontWeight: 'bold',
-    marginBottom: 8,
+    marginBottom: 16,
+    textAlign: 'center',
   },
   subtitle: {
-    color: theme.colors.secondary,
-    fontSize: 18,
-    marginBottom: 32,
+    color: '#10B981',
+    fontSize: 24,
+    marginBottom: 48,
+    textAlign: 'center',
   },
   button: {
-    backgroundColor: theme.colors.secondary,
-    paddingHorizontal: 32,
-    paddingVertical: 16,
+    backgroundColor: '#10B981',
+    paddingHorizontal: 40,
+    paddingVertical: 20,
     borderRadius: 8,
+    minWidth: 200,
   },
   buttonText: {
-    color: theme.colors.text,
-    fontSize: 16,
+    color: '#FFFFFF',
+    fontSize: 18,
     fontWeight: '600',
+    textAlign: 'center',
   },
 });
